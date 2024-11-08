@@ -102,6 +102,15 @@ class SurrogateEnv(gym.Env):
         
         self.state.loc[self.state_csv_columns] = state
         # Compute reward
+        boiler_output = pd.DataFrame(boiler_output.reshape(1, -1), columns = ['heatingGroupFmu.pSteTur', 'heatingGroupFmu.pGasTur', 'heatingGroupFmu.mSteBoi', 
+           'heatingGroupFmu.mSteChp', 'heatingGroupFmu.mFueChp', 'heatingGroupFmu.mFueBoi', 'heatingGroupFmu.qAbsChi', 
+           'heatingGroupFmu.preChp.p','heatingGroupFmu.preBoi.p', 'heatingGroupFmu.chp.botCycExp.QsteAbs',
+          'heatingGroupFmu.chp.botCycExp.Qlos','heatingGroupFmu.chp.botCycExp.exhQ.y','heatingGroupFmu.qFueChp'] )
+        chiller_output = pd.DataFrame(chiller_output.reshape(1, -1), columns = ['chillersFMU.pPumAbs', 'chillersFMU.pFanAbs', 'chillersFMU.pPum', 'chillersFMU.pFan', 
+            'chillersFMU.TchiAbsSup', 'chillersFMU.TchiSup', 'chillersFMU.pChi', 
+           'chillersFMU.QchiAbs','chillersFMU.mAbsChi','chillersFMU.mCenChi' ]  )
+        electrical_output = pd.DataFrame(electrical_output.reshape(1, -1), columns = ['electricalGroup.Ppv', 'electricalGroup.Soc_duplicate', 'electricalGroup.Pbat', 'electricalGroup.Pgri.real'])
+        
         reward = self._compute_reward(boiler_output, chiller_output, electrical_output)
         self.timesteps+=1
         
