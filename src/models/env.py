@@ -121,12 +121,12 @@ class SurrogateEnv(gym.Env):
         self.max_p_grid = self.max_p_grid + [electrical_output['electricalGroup.Pgri.real'][0]]
         if len(self.max_p_grid) > 720:
             self.max_p_grid.pop(0)
-        reward = self._compute_reward(boiler_output, chiller_output, electrical_output, demand_data)
+        reward, ind_rews = self._compute_reward(boiler_output, chiller_output, electrical_output, demand_data)
         self.timesteps+=1
         
         done = self.timesteps >= self.max_timesteps_
         trunc = done
-        info = dict(electrical_output = electrical_output, boiler_output = boiler_output, chiller_output = chiller_output)
+        info = dict(grid_reward = ind_rews[0], fuel_rewards = ind_rews[1], peakDem_rewards = ind_rews[2], co2_reward = ind_rews[3], safe_reward = ind_rews[4])
         
         return self.state.to_numpy(), reward, done, trunc, info
         
@@ -187,7 +187,7 @@ class SurrogateEnv(gym.Env):
 
         
         
-        return reward_total
+        return reward_total, [grid_reward, fuel_rewards, peakDem_rewards, co2_reward, safe_reward]
         
     def render(self):
         
